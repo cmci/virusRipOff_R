@@ -1,0 +1,13 @@
+mylist <- list(a=rnorm(100), b=rnorm(100) )
+names(mylist)
+summary(mylist[[1]])
+# or
+summary(mylist[['a']])
+# or
+summary(mylist$a)
+# or 
+d <- 'a'
+summary(mylist[[d]])
+
+# or
+lapply( mylist, summary )
