@@ -70,12 +70,25 @@ xordering = c("ctrl1", "ctrl2", "ROCKinh", "Blebb10um", "ClaD06", "CK666", "KOCL
 ggplot(alldata, aes(x=type, y=RipOff_Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext)
 
 ylabeltext2 = "Rip-Off-Density (Before Adding Drug)\n[counts/100um^2]"
-ggplot(alldata, aes(x=type, y=RipOffPreDensity)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext2, limits = c(0, 7))
+ggplot(alldata, aes(x=type, y=RipOffPreDensity)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext2)
 
 #assessing changes of individuals (ratio of post/pre on per frame bases)
 alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity/6*4
+
 ylabeltext3 = "RipOff Change \npost / pre treatment per frame"
 ggplot(alldata, aes(x=type, y=RipOffChange)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext3)
 
 # only controls
 ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=type, y=RipOffChange)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments") + scale_y_continuous(name=ylabeltext3)
+
+
+# checking the density for each type (VirusDensity_in_each_Experiment)
+ylabeltext4 = "Virus Density in 1st frame\n [counts/um^2]"
+ggplot(alldata, aes(x=type, y = Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext4)
+
+alldata$RipOffChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (alldata$Dots.Total - alldata$RipOff.counts1_4))
+
+ylabeltext5 = "RipOff Change (Density Corrected) \npost / pre treatment per frame"
+ggplot(alldata, aes(x=type, y=RipOffChangeCorrected)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext5)
+
+                                                          
