@@ -159,7 +159,7 @@ ggsave(paste('RipOffDensityChanges_DensityCorrected.png'), width=25, height=20, 
 
 ### plotting time series
 
-ggplot(data=timecourseAll) + 
+ggplot(data = filter(timecourseAll, Frame > 2))  + 
   geom_path(aes(x=Frame, y=Counts, color=CellID)) + 
   scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
   scale_y_continuous(name='Rip-Off [Counts]') + 
@@ -169,7 +169,7 @@ ggsave('TimeCourse_Counts.png', width=25, height=20, units="cm")
 for (thename in names(datalist)){
   typemax = max(timecourseAll$Counts[timecourseAll$Type==thename])
   annoY = typemax/2
-  ggplot(data=filter(timecourseAll, Type==thename)) + 
+  ggplot(data=filter(timecourseAll, Type==thename, Frame > 2)) + 
     geom_path(aes(x=Frame, y=Counts, color=CellID)) + 
     scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
     scale_y_continuous(name='Rip-Off [Counts]') +
@@ -177,13 +177,13 @@ for (thename in names(datalist)){
   ggsave(paste("TimeCourse_Counts_",thename,".png", sep=''), width=25, height=20, units="cm")
 }
 
-ggplot(data=timecourseAll) + geom_path(aes(x=Frame, y=RipOffDensity, color=CellID)) + scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + scale_y_continuous(name='Rip-Off Density \n[counts/100um^2]') + facet_wrap(~ Type, nrow = 4)
+ggplot(data=filter(timecourseAll, Frame > 2)) + geom_path(aes(x=Frame, y=RipOffDensity, color=CellID)) + scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + scale_y_continuous(name='Rip-Off Density \n[counts/100um^2]') + facet_wrap(~ Type, nrow = 4)
 ggsave(paste('TimeCourse_RipOffDensity.png'), width=25, height=20, units="cm")
 
 for (thename in names(datalist)){
   typemax = max(timecourseAll$RipOffDensity[timecourseAll$Type==thename])
   annoY = typemax/2
-  ggplot(data=filter(timecourseAll, Type==thename)) + 
+  ggplot(data=filter(timecourseAll, Type==thename, Frame > 2)) + 
     geom_path(aes(x=Frame, y=RipOffDensity, color=CellID)) + 
     scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
     scale_y_continuous(name='Rip-Off Density \n[counts/100um^2]') +
@@ -191,13 +191,13 @@ for (thename in names(datalist)){
   ggsave(paste("TimeCourse_RipOffDensity_",thename,".png", sep=''), width=25, height=20, units="cm")
 }
 
-ggplot(data=timecourseAll) + geom_path(aes(x=Frame, y=VirusDensity, color=CellID)) + scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + scale_y_continuous(name='Virus Density \n[counts/100um^2]') + facet_wrap(~ Type, nrow = 4)
+ggplot(data=filter(timecourseAll, Frame > 2)) + geom_path(aes(x=Frame, y=VirusDensity, color=CellID)) + scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + scale_y_continuous(name='Virus Density \n[counts/100um^2]') + facet_wrap(~ Type, nrow = 4)
 ggsave(paste('TimeCourse_VirusDensity.png'), width=25, height=20, units="cm")
 
 for (thename in names(datalist)){
   typemax = max(timecourseAll$VirusDensity[timecourseAll$Type==thename])
   annoY = typemax/2
-  ggplot(data=filter(timecourseAll, Type==thename)) + 
+  ggplot(data=filter(timecourseAll, Type==thename, Frame > 2)) + 
     geom_path(aes(x=Frame, y=VirusDensity, color=CellID)) + 
     scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
     scale_y_continuous(name='Virus Density \n[counts/100um^2]', limits=c(0, NA)) +
