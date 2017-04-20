@@ -11,3 +11,5 @@ summary(mylist[[d]])
 
 # or
 lapply( mylist, summary )
+
+
