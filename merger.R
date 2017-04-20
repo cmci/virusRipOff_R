@@ -35,17 +35,19 @@ datanames = c(
   "Hela"
 )
 
-# prepare an empty list, which will hold all imported data as elements. 
+# prepare an empty list, which will hold all imported data as elements.
+# key = experiment type
+# value = dataframe, imported from ImageJ results
 dflist <- vector("list", length(datanames))
 # fill names first
 names(dflist) <- datanames
-# adding elements
+# adding values (data) to each keys
 for (ind in 1:length(datanames)){
   dflist[[datanames[ind]]] <- read.csv2( file.path(gppath, folders[[ind]], "results.csv"), sep=",", dec=".")
   dflist[[datanames[ind]]]$type = rep(datanames[[ind]], nrow(dflist[[datanames[ind]]]))
 }
 
-# merge all data in a single dataframe
+# merge all dataframes in the above dictionary in a single dataframe
 for (i in 1:length(datanames)){
   if (i == 1){
     alldata = merge(dflist[[1]], dflist[[2]], all = TRUE)
@@ -53,12 +55,21 @@ for (i in 1:length(datanames)){
     alldata = merge(alldata, dflist[[i]], all = TRUE)
   }
 }
+
+# specifically create a data frame for all controls. 
 controlAll = merge(dflist[[1]], dflist[[2]], all = TRUE)
 
+# compute pre / post drug treatment RipOff density. 
 alldata$RipOff_Density <- alldata$RipOff.counts5_10 / alldata$Area.um2. * 100
 alldata$RipOffPreDensity <- alldata$RipOff.counts1_4 / alldata$Area.um2. * 100
 
-        
+#assessing changes of individuals (ratio of post/pre on per frame bases)
+#alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity/6*4
+alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity
+
+# Correction of Rip-Off density, as post-drug rip-offs are based on less virus. 
+alldata$RipOffChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (alldata$Dots.Total - alldata$RipOff.counts1_4))
+
 library("ggplot2")
 
 # checking the dependency of rip-off density to overall virus density, only control
@@ -83,10 +94,6 @@ ylabeltext2 = "Rip-Off-Density (Before Adding Drug)\n[counts/100um^2]"
 ggplot(alldata, aes(x=type, y=RipOffPreDensity)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext2)
 ggsave(paste('RipOff_Density_allExperiments_BeforeDrug.png'), width=25, height=15, units="cm")
 
-#assessing changes of individuals (ratio of post/pre on per frame bases)
-#alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity/6*4
-alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity
-
 ylabeltext3 = "RipOff Change \npost / pre treatment per frame"
 ggplot(alldata, aes(x=type, y=RipOffChange)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext3)
 ggsave(paste('RipOffDensityChanges.png'), width=25, height=20, units="cm")
@@ -95,13 +102,10 @@ ggsave(paste('RipOffDensityChanges.png'), width=25, height=20, units="cm")
 ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=type, y=RipOffChange)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments") + scale_y_continuous(name=ylabeltext3)
 ggsave(paste('RipOffDensityChanges_OnlyControls.png'), width=25, height=20, units="cm")
 
-
 # checking the density for each type (VirusDensity_in_each_Experiment)
 ylabeltext4 = "Virus Density in 2nd frame\n [counts/um^2]"
 ggplot(alldata, aes(x=type, y = Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext4)
 ggsave(paste('virusDensity_allExperiments.png'), width=25, height=15, units="cm")
-
-alldata$RipOffChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (alldata$Dots.Total - alldata$RipOff.counts1_4))
 
 ylabeltext5 = "RipOff Change (Density Corrected) \npost / pre treatment per frame"
 ggplot(alldata, aes(x=type, y=RipOffChangeCorrected)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext5)
