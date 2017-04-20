@@ -14,7 +14,8 @@ folders = c(
   "170222 Genistein croped and 16 frames",
   "170302 bcyclo croped and 16 frames",
   "170307 a5b1peptidomimetic croped and 16 frames",
-  "170328 beta1ABp5d2 croped and 14 frames"
+  "170328 beta1ABp5d2 croped and 14 frames",
+  "170405 Hela croped and 16 frames"
 )
 
 datanames = c(
@@ -30,7 +31,8 @@ datanames = c(
   "Genistein",
   "bcyclo",
   "a5b1",
-  "beta1ABp5d2"
+  "beta1ABp5d2",
+  "Hela"
 )
 
 # prepare an empty list, which will hold all imported data as elements. 
