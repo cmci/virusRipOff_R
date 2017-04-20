@@ -14,6 +14,7 @@ folders = c(
   "170206 KOCLCAB croped and 50 frames",
   "170215 SMIFH2 croped and 16 frames",
   "170217 Jasplakinolide croped and 16 frames",
+  "170221 Jasplakinolide croped and 16 frames",
   "170222 Genistein croped and 16 frames",
   "170302 bcyclo croped and 16 frames",
   "170307 a5b1peptidomimetic croped and 16 frames",
@@ -26,19 +27,23 @@ datalist = list(
   "ctrl2"= seq(8),
   "ROCKinh" = c(0, 1, 2, 5, 6) + 1,
   "Blebb10um" = c(0, 2, 3, 6, 7) + 1,
-  "ClaD06" = c(0, 1, 2) + 1,
+  "ClaD06" = c(0, 1, 2, 3) + 1,
   "CK666"= c(0, 1, 2, 3, 7, 8) + 1, 
   "KOCLCAB" = c(1, 2, 4, 5, 6, 7, 8, 9) + 1,
   "SMIFH2" = c(1, 2, 3, 4, 5, 6, 7) + 1,
   "Jaspla" = c(4) + 1,
+  "Jaspla2" = c(1, 2, 3, 4) + 1,
   "Genistein" = seq(11),
   "bcyclo" = seq(9),
-  "a5b1" = c(0, 1, 9) + 1,
+  "a5b1" = c(0, 1, 2, 4, 5, 6, 7, 8, 9, 10) + 1,
   "beta1ABp5d2" = c(1, 2, 3, 4, 5, 6, 9) + 1,
   "Hela" = c(0, 1, 2, 3, 4, 5, 6, 8, 9) + 1
 )
 
 datanames = names(datalist)
+
+## box plot order
+xordering = c("ctrl1", "ctrl2", "ROCKinh", "Blebb10um", "ClaD06", "CK666", "KOCLCAB", "SMIFH2", "Jaspla", "Jaspla2", "Genistein", "bcyclo", "a5b1", "beta1ABp5d2", "Hela")
   
 #   c(
 #   "ctrl1",
@@ -132,7 +137,6 @@ ggsave(paste('All_RipOffPreDensityVSdensity.png'), width=25, height=20, units="c
 
 
 ylabeltext = "Rip-Off-Density [counts/100um^2]"
-xordering = c("ctrl1", "ctrl2", "ROCKinh", "Blebb10um", "ClaD06", "CK666", "KOCLCAB", "SMIFH2", "Jaspla", "Genistein", "bcyclo", "a5b1", "beta1ABp5d2", "Hela")
 ggplot(alldata, aes(x=type, y=RipOff_Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext)
 ggsave(paste('RipOff_Density_allExperiments.png'), width=25, height=15, units="cm")
 
