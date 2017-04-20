@@ -14,7 +14,8 @@ folders = c(
   "170222 Genistein croped and 16 frames",
   "170302 bcyclo croped and 16 frames",
   "170307 a5b1peptidomimetic croped and 16 frames",
-  "170328 beta1ABp5d2 croped and 14 frames"
+  "170328 beta1ABp5d2 croped and 14 frames", 
+  "170405 Hela croped and 16 frames"
 )
 
 
@@ -31,7 +32,8 @@ datalist = list(
   "Genistein" = seq(11),
   "bcyclo" = seq(9),
   "a5b1" = c(0, 1, 9) + 1,
-  "beta1ABp5d2" = c(1, 2, 3, 4, 5, 6, 9) + 1
+  "beta1ABp5d2" = c(1, 2, 3, 4, 5, 6, 9) + 1,
+  "Hela" = c(0, 1, 2, 3, 4, 5, 6, 8, 9) + 1
 )
 
 timecourseAll = data.frame()
