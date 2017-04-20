@@ -75,13 +75,13 @@ ggsave(paste('All_RipOffPreDensityVSdensity.png'), width=25, height=20, units="c
 
 
 ylabeltext = "Rip-Off-Density [counts/100um^2]"
-xordering = c("ctrl1", "ctrl2", "ROCKinh", "Blebb10um", "ClaD06", "CK666", "KOCLCAB", "SMIFH2", "Jaspla", "Genistein", "bcyclo", "a5b1", "beta1ABp5d2")
+xordering = c("ctrl1", "ctrl2", "ROCKinh", "Blebb10um", "ClaD06", "CK666", "KOCLCAB", "SMIFH2", "Jaspla", "Genistein", "bcyclo", "a5b1", "beta1ABp5d2", "Hela")
 ggplot(alldata, aes(x=type, y=RipOff_Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext)
-ggsave(paste('RipOff_Density_allExperiments.png'), width=25, height=20, units="cm")
+ggsave(paste('RipOff_Density_allExperiments.png'), width=25, height=15, units="cm")
 
 ylabeltext2 = "Rip-Off-Density (Before Adding Drug)\n[counts/100um^2]"
 ggplot(alldata, aes(x=type, y=RipOffPreDensity)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext2)
-ggsave(paste('RipOff_Density_allExperiments_BeforeDrug.png'), width=25, height=20, units="cm")
+ggsave(paste('RipOff_Density_allExperiments_BeforeDrug.png'), width=25, height=15, units="cm")
 
 #assessing changes of individuals (ratio of post/pre on per frame bases)
 #alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity/6*4
@@ -97,9 +97,9 @@ ggsave(paste('RipOffDensityChanges_OnlyControls.png'), width=25, height=20, unit
 
 
 # checking the density for each type (VirusDensity_in_each_Experiment)
-ylabeltext4 = "Virus Density in 1st frame\n [counts/um^2]"
+ylabeltext4 = "Virus Density in 2nd frame\n [counts/um^2]"
 ggplot(alldata, aes(x=type, y = Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext4)
-ggsave(paste('virusDensity_allExperiments.png'), width=25, height=20, units="cm")
+ggsave(paste('virusDensity_allExperiments.png'), width=25, height=15, units="cm")
 
 alldata$RipOffChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (alldata$Dots.Total - alldata$RipOff.counts1_4))
 
