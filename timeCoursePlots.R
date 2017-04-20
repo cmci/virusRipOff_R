@@ -1,5 +1,6 @@
 # import time course of rip-off counts. 
-
+library("dplyr")
+        
 gppath <- '/Users/miura/Dropbox/people/Tina/shared_Tina_Kota/Data Tina/'
 folders = c(
   "161122 ctrl croped and 16 frames",
