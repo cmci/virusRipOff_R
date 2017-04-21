@@ -3,42 +3,61 @@
 library("ggplot2")
 library("dplyr")
 
-gppath <- '/Users/miura/Dropbox/people/Tina/shared_Tina_Kota/Data Tina/'
-folders = c(
-  "161122 ctrl croped and 16 frames",
-  "161206 ctrl croped and 16 frames",  
-  "161129 ROCKinh croped and 16 frames",
-  "161205 10umblebb croped and 16 frames",
-  "161222 claD0.06 croped and 16 frames",
-  "170130 CK666 croped and 16 frames",
-  "170206 KOCLCAB croped and 50 frames",
-  "170215 SMIFH2 croped and 16 frames",
-  "170217 Jasplakinolide croped and 16 frames",
-  "170221 Jasplakinolide croped and 16 frames",
-  "170222 Genistein croped and 16 frames",
-  "170302 bcyclo croped and 16 frames",
-  "170307 a5b1peptidomimetic croped and 16 frames",
-  "170328 beta1ABp5d2 croped and 14 frames",
-  "170405 Hela croped and 16 frames"
-)
+# gppath <- '/Users/miura/Dropbox/people/Tina/shared_Tina_Kota/Data Tina/'
+# folders = c(
+#   "161122 ctrl croped and 16 frames",
+#   "161206 ctrl croped and 16 frames",  
+#   "161129 ROCKinh croped and 16 frames",
+#   "161205 10umblebb croped and 16 frames",
+#   "161222 claD0.06 croped and 16 frames",
+#   "170130 CK666 croped and 16 frames",
+#   "170206 KOCLCAB croped and 50 frames",
+#   "170215 SMIFH2 croped and 16 frames",
+#   "170217 Jasplakinolide croped and 16 frames",
+#   "170221 Jasplakinolide croped and 16 frames",
+#   "170222 Genistein croped and 16 frames",
+#   "170302 bcyclo croped and 16 frames",
+#   "170307 a5b1peptidomimetic croped and 16 frames",
+#   "170328 beta1ABp5d2 croped and 14 frames",
+#   "170405 Hela croped and 16 frames"
+# )
+# 
+# datalist = list(
+#   "ctrl1" = seq(5),
+#   "ctrl2"= seq(8),
+#   "ROCKinh" = c(0, 1, 2, 5, 6) + 1,
+#   "Blebb10um" = c(0, 2, 3, 6, 7) + 1,
+#   "ClaD06" = c(0, 1, 2) + 1,
+#   "CK666"= c(0, 1, 2, 3, 7, 8) + 1, 
+#   "KOCLCAB" = c(1, 2, 4, 5, 6, 7, 8, 9) + 1,
+#   "SMIFH2" = c(1, 2, 3, 4, 5, 6, 7) + 1,
+#   "Jaspla" = c(4) + 1,
+#   "Jaspla2" = c(1, 2, 3, 4) + 1,
+#   "Genistein" = seq(11),
+#   "bcyclo" = seq(9),
+#   "a5b1" = c(0, 1, 2, 4, 5, 6, 7, 8, 9, 10) + 1,
+#   "beta1ABp5d2" = c(1, 2, 3, 4, 5, 6, 9) + 1,
+#   "Hela" = c(0, 1, 2, 3, 4, 5, 6, 8, 9) + 1
+# )
 
-datalist = list(
-  "ctrl1" = seq(5),
-  "ctrl2"= seq(8),
-  "ROCKinh" = c(0, 1, 2, 5, 6) + 1,
-  "Blebb10um" = c(0, 2, 3, 6, 7) + 1,
-  "ClaD06" = c(0, 1, 2) + 1,
-  "CK666"= c(0, 1, 2, 3, 7, 8) + 1, 
-  "KOCLCAB" = c(1, 2, 4, 5, 6, 7, 8, 9) + 1,
-  "SMIFH2" = c(1, 2, 3, 4, 5, 6, 7) + 1,
-  "Jaspla" = c(4) + 1,
-  "Jaspla2" = c(1, 2, 3, 4) + 1,
-  "Genistein" = seq(11),
-  "bcyclo" = seq(9),
-  "a5b1" = c(0, 1, 2, 4, 5, 6, 7, 8, 9, 10) + 1,
-  "beta1ABp5d2" = c(1, 2, 3, 4, 5, 6, 9) + 1,
-  "Hela" = c(0, 1, 2, 3, 4, 5, 6, 8, 9) + 1
-)
+#inputcsv = read.csv('/Users/miura/Desktop/20170421_test/test2.csv')
+inputcsv = read.csv('/Users/miura/Dropbox/people/Tina/shared_Tina_Kota/data_lists/test.csv')
+gppath = as.character(inputcsv$root[1])
+folders = as.character(inputcsv$datafolder)
+datanames = as.character(inputcsv$type)
+dflist <- vector("list", length(datanames))
+names(dflist) <- datanames
+datalist <- vector("list", length(datanames))
+names(datalist) <- datanames
+for (ind in 1:length(datanames)){
+  print(datanames[ind])
+  print(file.path(gppath, folders[[ind]], "results.csv"))
+  dflist[[datanames[ind]]] <- read.csv( file.path(gppath, folders[[ind]], "results.csv"))
+  dflist[[datanames[ind]]]$type = rep(datanames[[ind]], nrow(dflist[[datanames[ind]]]))
+  ids = inputcsv[ind, 4:ncol(inputcsv)]
+  ids = ids[!is.na(ids)]
+  datalist[[datanames[ind]]] <- ids
+}
 
 datanames = names(datalist)
 
