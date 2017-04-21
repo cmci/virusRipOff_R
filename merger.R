@@ -163,48 +163,59 @@ ggsave(paste('RipOffDensityChanges_DensityCorrected.png'), width=25, height=20, 
 
 ### plotting time series
 
-ggplot(data = filter(timecourseAll, Frame > 2))  + 
+timecourseAllF2 = filter(timecourseAll, Frame >= 2, Frame <= 16)
+
+ggplot(data = timecourseAllF2)  + 
   geom_path(aes(x=Frame, y=Counts, color=CellID)) + 
-  scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
-  scale_y_continuous(name='Rip-Off [Counts]') + 
+  scale_x_continuous(name = 'Time [Frame]', limits=c(2, 16)) + 
+  scale_y_continuous(name='Rip-Off [Counts]', limits = NULL) + 
   facet_wrap(~ Type, nrow = 4)
 ggsave('TimeCourse_Counts.png', width=25, height=20, units="cm")
 
 for (thename in names(datalist)){
-  typemax = max(timecourseAll$Counts[timecourseAll$Type==thename])
+  typemax = max(timecourseAllF2$Counts[timecourseAllF2$Type==thename])
   annoY = typemax/2
-  ggplot(data=filter(timecourseAll, Type==thename, Frame > 2)) + 
+  ggplot(data= filter(timecourseAllF2, Type==thename) ) + 
     geom_path(aes(x=Frame, y=Counts, color=CellID)) + 
-    scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
-    scale_y_continuous(name='Rip-Off [Counts]') +
+    scale_x_continuous(name = 'Time [Frame]', limits=c(2, 16)) + 
+    scale_y_continuous(name='Rip-Off [Counts]', limits = NULL) +
     annotate("text", x=12, y=annoY, label= thename, size=30, color='gray')
   ggsave(paste("TimeCourse_Counts_",thename,".png", sep=''), width=25, height=20, units="cm")
 }
 
-ggplot(data=filter(timecourseAll, Frame > 2)) + geom_path(aes(x=Frame, y=RipOffDensity, color=CellID)) + scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + scale_y_continuous(name='Rip-Off Density \n[counts/100um^2]') + facet_wrap(~ Type, nrow = 4)
+ggplot(data= timecourseAllF2) + 
+  geom_path(aes(x=Frame, y=RipOffDensity, color=CellID)) + 
+  scale_x_continuous(name = 'Time [Frame]', limits=c(2, 16)) + 
+  scale_y_continuous(name='Rip-Off Density \n[counts/100um^2]', limits = NULL) + 
+  facet_wrap(~ Type, nrow = 4)
 ggsave(paste('TimeCourse_RipOffDensity.png'), width=25, height=20, units="cm")
 
 for (thename in names(datalist)){
-  typemax = max(timecourseAll$RipOffDensity[timecourseAll$Type==thename])
+  typemax = max(timecourseAllF2$RipOffDensity[timecourseAllF2$Type==thename])
   annoY = typemax/2
-  ggplot(data=filter(timecourseAll, Type==thename, Frame > 2)) + 
+  ggplot(data= filter(timecourseAllF2, Type==thename)) + 
     geom_path(aes(x=Frame, y=RipOffDensity, color=CellID)) + 
-    scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
-    scale_y_continuous(name='Rip-Off Density \n[counts/100um^2]') +
+    scale_x_continuous(name = 'Time [Frame]', limits=c(2, 16)) + 
+    scale_y_continuous(name='Rip-Off Density \n[counts/100um^2]', limits = NULL) +
     annotate("text", x=12, y=annoY, label= thename, size=30, color='gray')
   ggsave(paste("TimeCourse_RipOffDensity_",thename,".png", sep=''), width=25, height=20, units="cm")
 }
 
-ggplot(data=filter(timecourseAll, Frame > 2)) + geom_path(aes(x=Frame, y=VirusDensity, color=CellID)) + scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + scale_y_continuous(name='Virus Density \n[counts/100um^2]') + facet_wrap(~ Type, nrow = 4)
+ggplot(data= timecourseAllF2) + 
+  geom_path(aes(x=Frame, y=VirusDensity, color=CellID)) + 
+  scale_x_continuous(name = 'Time [Frame]', limits=c(2, 16)) + 
+  scale_y_continuous(name='Virus Density \n[counts/100um^2]', limits = NULL) + 
+  facet_wrap(~ Type, nrow = 4)
 ggsave(paste('TimeCourse_VirusDensity.png'), width=25, height=20, units="cm")
 
 for (thename in names(datalist)){
-  typemax = max(timecourseAll$VirusDensity[timecourseAll$Type==thename])
+  typemax = max(timecourseAllF2$VirusDensity[timecourseAllF2$Type==thename])
   annoY = typemax/2
-  ggplot(data=filter(timecourseAll, Type==thename, Frame > 2)) + 
+  print(thename)
+  ggplot(data= filter(timecourseAllF2, Type==thename)) + 
     geom_path(aes(x=Frame, y=VirusDensity, color=CellID)) + 
-    scale_x_continuous(name = 'Time [Frame]', limits=c(1, 16)) + 
-    scale_y_continuous(name='Virus Density \n[counts/100um^2]', limits=c(0, NA)) +
+    scale_x_continuous(name = 'Time [Frame]', limits=c(2, 16)) + 
+    scale_y_continuous(name='Virus Density \n[counts/100um^2]', limits = NULL ) +
     annotate("text", x=12, y=annoY, label= thename, size=30, color='gray')
   ggsave(paste("TimeCourse_VirusDensity_",thename,".png", sep=''), width=25, height=20, units="cm")
 }
