@@ -27,7 +27,7 @@ datalist = list(
   "ctrl2"= seq(8),
   "ROCKinh" = c(0, 1, 2, 5, 6) + 1,
   "Blebb10um" = c(0, 2, 3, 6, 7) + 1,
-  "ClaD06" = c(0, 1, 2, 3) + 1,
+  "ClaD06" = c(0, 1, 2) + 1,
   "CK666"= c(0, 1, 2, 3, 7, 8) + 1, 
   "KOCLCAB" = c(1, 2, 4, 5, 6, 7, 8, 9) + 1,
   "SMIFH2" = c(1, 2, 3, 4, 5, 6, 7) + 1,
@@ -108,8 +108,10 @@ for (i in 1:length(folders)){
   exptype = names(datalist)[i]
   items = length(datalist[[exptype]])
   pathvector = character(length(items))
+  print(exptype)
   for (j in 1:items){
     expnum =  datalist[[exptype]][j]
+    print(paste('Cell', expnum))
     datapath = file.path(curfolder, paste('cell', expnum, '_virus_median.tif_counts.csv', sep=''))
     curdata = read.csv(datapath)
     curdata$Type = rep(names(datalist)[i], nrow(curdata))
