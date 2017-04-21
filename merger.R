@@ -3,8 +3,9 @@
 library("ggplot2")
 library("dplyr")
 
-inputcsv = read.csv('/Users/miura/Dropbox/people/Tina/shared_Tina_Kota/data_lists/test.csv')
-#inputcsv = file.choose()
+# inputcsv = read.csv('/Users/miura/Dropbox/people/Tina/shared_Tina_Kota/data_lists/test.csv')
+inputcsvpath = file.choose()
+inputcsv = read.csv( inputcsvpath )
 
 ### load "results.csv" 
 gppath = as.character(inputcsv$root[1])
@@ -97,6 +98,10 @@ alldata$RipOffChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (
 alldata$RipOff2ChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (alldata$Dots.Total - alldata$RipOff.counts2_4 - alldata$RipOff.counts5_7))
 
 ##### PLOTTINGS #####
+
+if ( !dir.exists( file.path( gppath, 'plots') )) {
+  dir.create( file.path( gppath, 'plots') )
+}
 
 outfoldername = strftime(Sys.time(), "%Y%m%d-%H%M")
 outfolderpath = file.path(gppath, "plots", outfoldername)
