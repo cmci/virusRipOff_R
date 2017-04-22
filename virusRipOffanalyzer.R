@@ -45,16 +45,20 @@ xordering = c("ctrl1", "ctrl2", "ROCKinh", "Blebb10um", "ClaD06", "CK666", "KOCL
 # }
 
 # merge all dataframes in the above dictionary in a single dataframe
-for (i in 1:length(datanames)){
-  if (i == 1){
-    alldata = merge(dflist[[1]], dflist[[2]], all = TRUE)
-  } else if (i > 2){
-    alldata = merge(alldata, dflist[[i]], all = TRUE)
+if ( length( datanames) > 1){
+  for (i in 1:length(datanames)){
+    if (i == 2){
+      alldata = merge(dflist[[1]], dflist[[2]], all = TRUE)
+    } else if (i > 2){
+      alldata = merge(alldata, dflist[[i]], all = TRUE)
+    }
   }
+} else {
+  alldata = dflist[[1]]
 }
 
 # specifically create a data frame for all controls. 
-controlAll = merge(dflist[[1]], dflist[[2]], all = TRUE)
+# controlAll = merge(dflist[[1]], dflist[[2]], all = TRUE)
 
 ### time series
 
@@ -88,6 +92,9 @@ alldata$RipOffPreDensity <- alldata$RipOff.counts2_4 / alldata$Area.um2. * 100
 alldata$RipOff_Density <- alldata$RipOff.counts5_7 / alldata$Area.um2. * 100
 alldata$RipOff2_Density <- alldata$RipOff.counts8_10 / alldata$Area.um2. * 100
 
+# alternative
+# sum(timecourseAll$Counts[((timecourseAll$Frame >= 2) & (timecourseAll$Frame <= 4) & (timecourseAll$CellID==2))])
+
 #assessing changes of individuals (ratio of post/pre on per frame bases)
 #alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity/6*4
 alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity
@@ -115,8 +122,10 @@ if ( !dir.exists(outsubfoldername)) {
 }
 
 # checking the dependency of rip-off density to overall virus density, only control
-ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=Density, y = RipOff_Density)) + geom_point()
-ggsave(file.path(outfolderpath , 'Control_RipOffDensityVSdensity.png'), width=25, height=20, units="cm")
+if (('ctrl1' %in% datanames) & ('ctrl2' %in% datanames)) {
+  ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=Density, y = RipOff_Density)) + geom_point()
+  ggsave(file.path(outfolderpath , 'Control_RipOffDensityVSdensity.png'), width=25, height=20, units="cm")
+}
 
 # checking the dependency of rip-off density to overall virus density, all data
 ggplot(alldata, aes(x=Density, y = RipOff_Density)) + geom_point()
