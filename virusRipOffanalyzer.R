@@ -36,14 +36,6 @@ for (ind in 1:length(datanames)){
 ## box plot order
 xordering = c("ctrl1", "ctrl2", "ROCKinh", "Blebb10um", "ClaD06", "CK666", "KOCLCAB", "SMIFH2", "Jaspla", "Jaspla2", "Genistein", "bcyclo", "a5b1", "beta1ABp5d2", "Hela")
   
-# dflist <- vector("list", length(datanames))
-# names(dflist) <- datanames
-# 
-# for (ind in 1:length(datanames)){
-#   dflist[[datanames[ind]]] <- read.csv2( file.path(gppath, folders[[ind]], "results.csv"), sep=",", dec=".")
-#   dflist[[datanames[ind]]]$type = rep(datanames[[ind]], nrow(dflist[[datanames[ind]]]))
-# }
-
 # merge all dataframes in the above dictionary in a single dataframe
 if ( length( datanames) > 1){
   for (i in 1:length(datanames)){
@@ -75,7 +67,7 @@ for (i in 1:length(folders)){
     datapath = file.path(curfolder, paste('cell', expnum, '_virus_median.tif_counts.csv', sep=''))
     curdata = read.csv(datapath)
     curdata$Type = rep(names(datalist)[i], nrow(curdata))
-    curdata$CellID = rep(as.character(j), nrow(curdata))
+    curdata$CellID = rep(as.character(expnum), nrow(curdata))
     cellarea = alldata$Area.um2.[alldata$CellID==expnum & alldata$type==exptype]
     
     curdata$RipOffDensity = curdata$Counts / cellarea * 100
@@ -87,13 +79,73 @@ for (i in 1:length(folders)){
 }
 
 ### compute paramters
-# compute pre / post drug treatment RipOff density. 
-alldata$RipOffPreDensity <- alldata$RipOff.counts2_4 / alldata$Area.um2. * 100
-alldata$RipOff_Density <- alldata$RipOff.counts5_7 / alldata$Area.um2. * 100
-alldata$RipOff2_Density <- alldata$RipOff.counts8_10 / alldata$Area.um2. * 100
 
-# alternative
-# sum(timecourseAll$Counts[((timecourseAll$Frame >= 2) & (timecourseAll$Frame <= 4) & (timecourseAll$CellID==2))])
+## sum of ripoff counts, pre * post drug treatments. 
+preDrugStart = 2
+preDrugEnd = 4
+postDrugStart = 5
+postDrugEnd = 7
+postDrug2Start = 8
+postDrug2End = 10
+
+for ( exptype in names(datalist) ) {
+  for ( cellid in datalist[[exptype]] ) {
+    print(paste(exptype, cellid))
+    alldata$RipOffpre_counts[
+      alldata$type == exptype & 
+        alldata$CellID == cellid] = 
+      sum(timecourseAll$Counts[ 
+        timecourseAll$Type == exptype & 
+          timecourseAll$CellID == cellid & 
+          timecourseAll$Frame >= preDrugStart & 
+          timecourseAll$Frame <= preDrugEnd  ])
+    alldata$RipOffpost_counts[
+      alldata$type == exptype & 
+        alldata$CellID == cellid] = 
+      sum(timecourseAll$Counts[ 
+        timecourseAll$Type == exptype & 
+          timecourseAll$CellID == cellid & 
+          timecourseAll$Frame >= postDrugStart & 
+          timecourseAll$Frame <= postDrugEnd  ])
+    alldata$RipOffpost2_counts[
+      alldata$type == exptype & 
+        alldata$CellID == cellid] = 
+      sum(timecourseAll$Counts[ 
+        timecourseAll$Type == exptype & 
+          timecourseAll$CellID == cellid & 
+          timecourseAll$Frame >= postDrug2Start & 
+          timecourseAll$Frame <= postDrug2End  ])
+    
+    alldata$virusTotalCountsPre[
+      alldata$type == exptype & 
+        alldata$CellID == cellid] = 
+      timecourseAll$TotalCounts[ 
+        timecourseAll$Type == exptype & 
+          timecourseAll$CellID == cellid & 
+          timecourseAll$Frame == preDrugStart ]  
+    alldata$virusTotalCountsPost[
+      alldata$type == exptype & 
+        alldata$CellID == cellid] = 
+      timecourseAll$TotalCounts[ 
+        timecourseAll$Type == exptype & 
+          timecourseAll$CellID == cellid & 
+          timecourseAll$Frame == postDrugStart ]
+    alldata$virusTotalCountsPost2[
+      alldata$type == exptype & 
+        alldata$CellID == cellid] = 
+      timecourseAll$TotalCounts[ 
+        timecourseAll$Type == exptype & 
+          timecourseAll$CellID == cellid & 
+          timecourseAll$Frame == postDrug2Start ]       
+  }
+}
+
+
+# compute pre / post drug treatment RipOff density. 
+
+alldata$RipOffPreDensity <- alldata$RipOffpre_counts / alldata$Area.um2. * 100
+alldata$RipOff_Density <- alldata$RipOffpost_counts / alldata$Area.um2. * 100
+alldata$RipOff2_Density <- alldata$RipOffpost2_counts / alldata$Area.um2. * 100
 
 #assessing changes of individuals (ratio of post/pre on per frame bases)
 #alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity/6*4
@@ -101,8 +153,8 @@ alldata$RipOffChange <- alldata$RipOff_Density/alldata$RipOffPreDensity
 alldata$RipOff2Change <- alldata$RipOff2_Density/alldata$RipOffPreDensity
 
 # Correction of Rip-Off density, as post-drug rip-offs are based on less virus. 
-alldata$RipOffChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (alldata$Dots.Total - alldata$RipOff.counts2_4))
-alldata$RipOff2ChangeCorrected <- alldata$RipOffChange * ( alldata$Dots.Total / (alldata$Dots.Total - alldata$RipOff.counts2_4 - alldata$RipOff.counts5_7))
+alldata$RipOffChangeCorrected <- alldata$RipOffChange * ( alldata$virusTotalCountsPre / alldata$virusTotalCountsPost )
+alldata$RipOff2ChangeCorrected <- alldata$RipOffChange * ( alldata$virusTotalCountsPre / alldata$virusTotalCountsPost2)
 
 ##### PLOTTINGS #####
 
@@ -122,7 +174,7 @@ if ( !dir.exists(outsubfoldername)) {
 }
 
 # checking the dependency of rip-off density to overall virus density, only control
-if (('ctrl1' %in% datanames) & ('ctrl2' %in% datanames)) {
+if ('ctrl1' %in% alldata$type & 'ctrl2' %in% alldata$type) {
   ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=Density, y = RipOff_Density)) + geom_point()
   ggsave(file.path(outfolderpath , 'Control_RipOffDensityVSdensity.png'), width=25, height=20, units="cm")
 }
@@ -141,7 +193,7 @@ ggplot(alldata, aes(x=type, y=RipOff_Density)) + geom_boxplot() + geom_jitter(wi
 ggsave(file.path(outfolderpath , 'RipOff_Density_allExperiments.png'), width=25, height=15, units="cm")
 
 ylabeltext = "Rip-Off-Density\nF8-F10 [counts/100um^2]"
-ggplot(alldata, aes(x=type, y=RipOff_Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext)
+ggplot(alldata, aes(x=type, y=RipOff2_Density)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments", limits=xordering) + scale_y_continuous(name=ylabeltext)
 ggsave(file.path(outfolderpath , 'RipOff_Density2_allExperiments.png'), width=25, height=15, units="cm")
 
 ylabeltext2 = "Rip-Off-Density (Before Adding Drug)\n[counts/100um^2]"
@@ -157,11 +209,13 @@ ggplot(alldata, aes(x=type, y=RipOff2Change)) + geom_boxplot() + geom_jitter(wid
 ggsave(file.path(outfolderpath , 'RipOff2DensityChanges.png'), width=25, height=20, units="cm")
 
 # only controls
-ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=type, y=RipOffChange)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments") + scale_y_continuous(name=ylabeltext3)
-ggsave(file.path(outfolderpath , 'RipOffDensityChanges_OnlyControls.png'), width=25, height=20, units="cm")
-
-ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=type, y=RipOff2Change)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments") + scale_y_continuous(name=ylabeltext3)
-ggsave(file.path(outfolderpath , 'RipOff2DensityChanges_OnlyControls.png'), width=25, height=20, units="cm")
+if ('ctrl1' %in% alldata$type & 'ctrl2' %in% alldata$type) {
+  ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=type, y=RipOffChange)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments") + scale_y_continuous(name=ylabeltext3)
+  ggsave(file.path(outfolderpath , 'RipOffDensityChanges_OnlyControls.png'), width=25, height=20, units="cm")
+  
+  ggplot(subset(alldata, type %in% c("ctrl1", "ctrl2")), aes(x=type, y=RipOff2Change)) + geom_boxplot() + geom_jitter(width=0.2) + scale_x_discrete(name="Experiments") + scale_y_continuous(name=ylabeltext3)
+  ggsave(file.path(outfolderpath , 'RipOff2DensityChanges_OnlyControls.png'), width=25, height=20, units="cm")
+}
 
 # RipOff changes, with corrections
 ylabeltext5 = "RipOff Change (Density Corrected) \npost[5-7] / pre treatment per frame"
