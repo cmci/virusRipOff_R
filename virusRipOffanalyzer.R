@@ -91,52 +91,30 @@ postDrug2End = 10
 for ( exptype in names(datalist) ) {
   for ( cellid in datalist[[exptype]] ) {
     print(paste(exptype, cellid))
-    alldata$RipOffpre_counts[
-      alldata$type == exptype & 
-        alldata$CellID == cellid] = 
-      sum(timecourseAll$Counts[ 
-        timecourseAll$Type == exptype & 
-          timecourseAll$CellID == cellid & 
-          timecourseAll$Frame >= preDrugStart & 
-          timecourseAll$Frame <= preDrugEnd  ])
-    alldata$RipOffpost_counts[
-      alldata$type == exptype & 
-        alldata$CellID == cellid] = 
-      sum(timecourseAll$Counts[ 
-        timecourseAll$Type == exptype & 
-          timecourseAll$CellID == cellid & 
-          timecourseAll$Frame >= postDrugStart & 
-          timecourseAll$Frame <= postDrugEnd  ])
-    alldata$RipOffpost2_counts[
-      alldata$type == exptype & 
-        alldata$CellID == cellid] = 
-      sum(timecourseAll$Counts[ 
-        timecourseAll$Type == exptype & 
-          timecourseAll$CellID == cellid & 
-          timecourseAll$Frame >= postDrug2Start & 
-          timecourseAll$Frame <= postDrug2End  ])
+    curcelldata = filter(timecourseAll, Type==exptype, CellID == cellid)
+    alldatafilter = alldata$type == exptype & alldata$CellID == cellid
+    alldata$RipOffpre_counts[ alldatafilter ] = 
+      sum(filter(curcelldata, 
+                 Frame >= preDrugStart,
+                 Frame <= preDrugEnd)$Counts)
+    alldata$RipOffpost_counts[ alldatafilter ] = 
+      sum(filter(curcelldata,
+                 Frame >= postDrugStart,
+                 Frame <= postDrugEnd )$Counts)
+    alldata$RipOffpost2_counts[ alldatafilter ] = 
+      sum(filter(curcelldata,
+                 Frame >= postDrug2Start,
+                 Frame <= postDrug2End)$Counts)
     
-    alldata$virusTotalCountsPre[
-      alldata$type == exptype & 
-        alldata$CellID == cellid] = 
-      timecourseAll$TotalCounts[ 
-        timecourseAll$Type == exptype & 
-          timecourseAll$CellID == cellid & 
-          timecourseAll$Frame == preDrugStart ]  
-    alldata$virusTotalCountsPost[
-      alldata$type == exptype & 
-        alldata$CellID == cellid] = 
-      timecourseAll$TotalCounts[ 
-        timecourseAll$Type == exptype & 
-          timecourseAll$CellID == cellid & 
-          timecourseAll$Frame == postDrugStart ]
-    alldata$virusTotalCountsPost2[
-      alldata$type == exptype & 
-        alldata$CellID == cellid] = 
-      timecourseAll$TotalCounts[ 
-        timecourseAll$Type == exptype & 
-          timecourseAll$CellID == cellid & 
-          timecourseAll$Frame == postDrug2Start ]       
+    alldata$virusTotalCountsPre[ alldatafilter ] = 
+      filter(curcelldata,
+             Frame == preDrugStart)$TotalCounts  
+    alldata$virusTotalCountsPost[ alldatafilter ] = 
+      filter(curcelldata,
+             Frame == postDrugStart)$TotalCounts 
+    alldata$virusTotalCountsPost2[ alldatafilter ] = 
+      filter(curcelldata,
+             Frame == postDrug2Start)$TotalCounts 
   }
 }
 
